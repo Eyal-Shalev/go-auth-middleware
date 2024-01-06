@@ -1,0 +1,27 @@
+### Hello, World!
+GET localhost:9090/
+
+> {%
+    client.test("Access allowed", function () {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
+### Deny access to admin
+GET localhost:9090/admin
+
+> {%
+    client.test("Access denied", function () {
+        client.assert(response.status === 403, "Response status is not 403");
+    });
+%}
+
+### Hello, Admin!
+GET localhost:9090/admin
+Authorization: Basic admin ADMIN
+
+> {%
+    client.test("Access allowed", function () {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
