@@ -18,3 +18,7 @@ func (fn BasicAuthFunc[T]) Wrap(next http.Handler) http.Handler {
 		return fn(r.Context(), userName, password)
 	}).Wrap(next)
 }
+
+func BasicAuth[T any](fn BasicAuthFunc[T]) Middleware {
+	return fn.Wrap
+}

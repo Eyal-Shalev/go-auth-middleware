@@ -29,6 +29,10 @@ func (fn AuthenticateFunc[T]) Wrap(next http.Handler) http.Handler {
 	})
 }
 
+func Authenticate[T any](fn AuthenticateFunc[T]) Middleware {
+	return fn.Wrap
+}
+
 type AuthorizeFunc[T any] func(r *http.Request, value T) bool
 
 func (fn AuthorizeFunc[T]) Wrap(next http.Handler) http.Handler {
@@ -41,4 +45,8 @@ func (fn AuthorizeFunc[T]) Wrap(next http.Handler) http.Handler {
 
 		next.ServeHTTP(w, r)
 	})
+}
+
+func Authorize[T any](fn AuthorizeFunc[T]) Middleware {
+	return fn.Wrap
 }
