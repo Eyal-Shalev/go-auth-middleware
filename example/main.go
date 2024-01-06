@@ -18,13 +18,15 @@ func basicAuthenticate(_ context.Context, userName, password string) (string, bo
 	return "", false, nil
 }
 
+func isAdmin(_ *http.Request, userName string) bool {
+	return userName == "admin"
+}
+
 func main() {
-	authenticate := authMiddleware.NewBasicAuthenticateMiddleware(basicAuthenticate)
-	authorizeAdmin := authMiddleware.NewAuthorizationMiddleware(func(r *http.Request, value string) bool {
-		return value == "admin"
-	})
+	authenticate := authMiddleware.BasicAuthFunc[string](basicAuthenticate)
+	authorizeAdmin := authMiddleware.AuthorizeFunc[string](isAdmin)
 	http.Handle("/", helloWorld)
-	http.Handle("/admin", authenticate(authorizeAdmin(helloAdmin)))
+	http.Handle("/admin", authenticate.Wrap(authorizeAdmin.Wrap(helloAdmin)))
 	err := http.ListenAndServe("localhost:9090", nil)
 	if err != nil {
 		panic(err)

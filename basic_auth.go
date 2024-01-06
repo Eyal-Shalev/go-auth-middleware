@@ -5,14 +5,16 @@ import (
 	"net/http"
 )
 
-type BasicAuthenticatorFunc[T any] func(ctx context.Context, userName, password string) (T, bool, error)
+type BasicAuthFunc[T any] func(ctx context.Context, userName, password string) (T, bool, error)
 
-func NewBasicAuthenticateMiddleware[T any](fn BasicAuthenticatorFunc[T]) Middleware {
-	return NewAuthenticateMiddleware(func(r *http.Request) (value T, ok bool, err error) {
+func (fn BasicAuthFunc[T]) Wrap(next http.Handler) http.Handler {
+	return AuthenticateFunc[T](func(r *http.Request) (value T, ok bool, err error) {
 		userName, password, ok := r.BasicAuth()
 		if !ok {
-			return
+			var zero T
+			return zero, false, nil
 		}
+
 		return fn(r.Context(), userName, password)
-	})
+	}).Wrap(next)
 }
