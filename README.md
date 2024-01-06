@@ -50,7 +50,7 @@ authzMiddleware := authMiddleware.NewAuthorizationMiddleware(authorize)
 
 ```go
 // Example basic authentication function
-func basicAuthenticator(username, password string) (T, bool, error) {
+func basicAuthenticator(ctx context.Context, username, password string) (T, bool, error) {
 // Your basic authentication logic here
 }
 
@@ -83,7 +83,7 @@ func (h httpStringHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 const helloWorld httpStringHandler = "Hello, World!"
 const helloAdmin httpStringHandler = "Hello, Admin!"
 
-func basicAuthenticate(userName, password string) (string, bool, error) {
+func basicAuthenticate(ctx context.Context, userName, password string) (string, bool, error) {
 	if password == strings.ToUpper(userName) {
 		return userName, true, nil
 	}

@@ -1,15 +1,17 @@
 package main
 
 import (
-	authMiddleware "github.com/Eyal-Shalev/go-auth-middleware"
+	"context"
 	"net/http"
 	"strings"
+
+	authMiddleware "github.com/Eyal-Shalev/go-auth-middleware"
 )
 
 const helloWorld httpStringHandler = "Hello, World!"
 const helloAdmin httpStringHandler = "Hello, Admin!"
 
-func basicAuthenticate(userName, password string) (string, bool, error) {
+func basicAuthenticate(_ context.Context, userName, password string) (string, bool, error) {
 	if password == strings.ToUpper(userName) {
 		return userName, true, nil
 	}
